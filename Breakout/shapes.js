@@ -150,6 +150,7 @@ class Text {
 
   putInCanvas() {
     ctx.font = '48px arial';
+    this.width = ctx.measureText(this.#message);
     ctx.fillStyle = this.color;
     ctx.fillText(this.#message, this.#x, this.#y);
   }
