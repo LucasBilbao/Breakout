@@ -136,4 +136,34 @@ class Rectangle {
   }
 }
 
-export default { Circle, Rectangle };
+class Text {
+  #x;
+  #y;
+  #message;
+  constructor(message, x, y, color = 'black') {
+    this.#message = message;
+    this.#x = x;
+    this.#y = y;
+    this.color = color;
+    this.putInCanvas();
+  }
+
+  putInCanvas() {
+    ctx.font = '48px arial';
+    ctx.fillStyle = this.color;
+    ctx.fillText(this.#message, this.#x, this.#y);
+  }
+
+  getX() {
+    return this.#x;
+  }
+
+  getY() {
+    return this.#y;
+  }
+  getMessage() {
+    return this.#message;
+  }
+}
+
+export default { Circle, Rectangle, Text };
