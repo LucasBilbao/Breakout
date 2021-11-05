@@ -128,7 +128,7 @@ class Rectangle {
   }
 
   clear() {
-    ctx.clearRect(this.#x, this.#y, this.#width, this.#height);
+    ctx.clearRect(this.#x - 1, this.#y - 1, this.#width + 2, this.#height + 2);
   }
 }
 
