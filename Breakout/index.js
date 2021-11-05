@@ -272,6 +272,7 @@ function removeAt(arr, index) {
 function getMousePos(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
 
+  if (isTouchDevice()) {
     return {
       x: evt.touches[0].clientX - rect.left,
       y: evt.touches[0].clientY - rect.top,
