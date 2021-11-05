@@ -271,15 +271,28 @@ function removeAt(arr, index) {
 
 function getMousePos(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
+  if (isTouchDevice()) {
+    return {
+      x: evt.touch[0].clientX - rect.left,
+      y: evt.touch[0].clientY - rect.top,
+    };
+  }
   return {
     x: evt.clientX - rect.left,
     y: evt.clientY - rect.top,
   };
 }
 
+const isTouchDevice = () => {
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  );
+};
+
 c.addEventListener('click', startOrPause);
 c.addEventListener('touchstart', startOrPause);
-c.addEventListener('touchend', startOrPause);
 
 const paddle = new shapes.Rectangle(
   paddleX,
