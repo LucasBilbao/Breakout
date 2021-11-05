@@ -269,8 +269,13 @@ function removeAt(arr, index) {
   return res;
 }
 
+let h1 = document.createElement('h1');
+document.body.appendChild(h1);
+
 function getMousePos(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
+
+  h1.innerHTML = `${isTouchDevice()}`;
   if (isTouchDevice()) {
     return {
       x: evt.touch[0].clientX - rect.left,
