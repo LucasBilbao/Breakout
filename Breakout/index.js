@@ -59,7 +59,6 @@ const centerX = c.width / 2;
 const centerY = c.height / 2;
 
 let mover;
-let request;
 
 const ball = new shapes.Circle(centerX, centerY, BALL_RADIUS);
 
@@ -124,6 +123,12 @@ function moveBall() {
 
 c.addEventListener('click', startOrPause);
 
-const rect = new shapes.Rectangle(100, 100, 100, 100, 'red');
+const paddle = new shapes.Rectangle(
+  paddleX,
+  paddleY,
+  PADDLE_WIDTH,
+  PADDLE_HEIGHT,
+  'red'
+);
 
 export { ctx };
