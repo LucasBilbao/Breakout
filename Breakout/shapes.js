@@ -130,6 +130,10 @@ class Rectangle {
   clear() {
     ctx.clearRect(this.#x - 1, this.#y - 1, this.#width + 2, this.#height + 2);
   }
+
+  static break(x, y, w, h) {
+    ctx.clearRect(x - 0.2, y - 0.2, w + 0.4, h + 0.4);
+  }
 }
 
 export default { Circle, Rectangle };
