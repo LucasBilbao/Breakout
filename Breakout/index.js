@@ -30,7 +30,7 @@ const PADDLE_OFFSET = 10;
 
 const BALL_RADIUS = 15;
 
-// My global letiables
+// My global variables
 const NUM_OF_BRICKS = NUM_ROWS * NUM_BRICKS_PER_ROW;
 let lives = 3;
 // const ball;
@@ -55,8 +55,6 @@ console.log(dx, dy);
 
 const paddleX = (c.width - PADDLE_WIDTH) / 2;
 const paddleY = c.height - (PADDLE_OFFSET + PADDLE_HEIGHT);
-// const lost;
-// const won;
 let notMoving = true;
 
 const ctx = c.getContext('2d');
@@ -109,6 +107,10 @@ function checkWalls() {
   }
 }
 
+function isGameOver() {
+  return lives === 0;
+}
+
 function startOrPause() {
   if (notMoving) {
     mover = setInterval(() => {
@@ -140,11 +142,40 @@ function moveBall() {
 
   if (
     ball.getY() + ball.getRadius() >= paddle.getY() &&
-    ball.getX() >= paddle.getX() &&
-    ball.getX() <= paddle.getX() + paddle.getWidth()
+    inInterval(ball.getX(), paddle.getX(), paddle.getX() + paddle.getWidth())
   ) {
     paddle.move(paddle.getX);
   }
+
+  if (isWon()) {
+    won();
+  }
+
+  if (isGameOver()) {
+    gameOver();
+  }
+}
+
+function won() {
+  clearInterval(mover);
+  notMoving = !notMoving;
+  clearOut();
+  new shapes.Text('You Won', (c.width - 192.1640625) / 2, (c.height - 5) / 2);
+}
+
+function isWon() {
+  return bricks.length === 0;
+}
+
+function gameOver() {
+  clearOut();
+  new shapes.Text('Game Over', (c.width - 248.0625) / 2, (c.height - 5) / 2);
+}
+
+function clearOut() {
+  ball.clear();
+  delete window.ball;
+  c.removeEventListener('click', startOrPause);
 }
 
 function checkObj() {
@@ -301,7 +332,5 @@ function drawBricks() {
 }
 
 let bricks = drawBricks();
-
-// console.log(bricks);
 
 export { ctx };
