@@ -2,17 +2,16 @@ import shapes from './shapes.js';
 
 const c = document.getElementById('myCanvas');
 
-const widthS = screen.width;
-const heightS = screen.height;
+const widthS = window.innerWidth;
+const heightS = window.innerHeight;
 
-const width = (widthS * 60) / 100;
-const height = (heightS * 90) / 100;
-
-c.width = 650;
-c.height = 700;
-
-// c.width = c.offsetWidth;
-// c.height = c.offsetHeight;
+if (widthS <= 768) {
+  c.width = (widthS * 99) / 100;
+  c.height = (heightS * 95) / 100;
+} else {
+  c.width = (widthS * 60) / 100;
+  c.height = (heightS * 90) / 100;
+}
 
 /* Constants for bricks */
 const NUM_ROWS = 8;
@@ -31,7 +30,6 @@ const PADDLE_OFFSET = 10;
 const BALL_RADIUS = 15;
 
 // My global variables
-const NUM_OF_BRICKS = NUM_ROWS * NUM_BRICKS_PER_ROW;
 let lives = 3;
 // const ball;
 // const paddle;
@@ -50,8 +48,6 @@ const angleY = Math.random() * (1 - -1) + -1 <= 0 ? -1 : 1;
 
 let dx = angleX * (Math.random() * (4 - 3) + 3);
 let dy = angleY * (Math.random() * (4 - 3) + 3);
-
-console.log(dx, dy);
 
 const paddleX = (c.width - PADDLE_WIDTH) / 2;
 const paddleY = c.height - (PADDLE_OFFSET + PADDLE_HEIGHT);
@@ -194,7 +190,6 @@ function checkBrick() {
       inInterval(top, bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
       inInterval(ball.getX(), bricks[i].x, bricks[i].x + BRICK_WIDTH)
     ) {
-      console.log(bricks[i]);
       dy = -dy;
       shapes.Rectangle.break(
         bricks[i].x,
@@ -211,7 +206,6 @@ function checkBrick() {
       inInterval(bottom, bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
       inInterval(ball.getX(), bricks[i].x, bricks[i].x + BRICK_WIDTH)
     ) {
-      console.log(bricks[i]);
       dy = -dy;
       shapes.Rectangle.break(
         bricks[i].x,
@@ -228,7 +222,6 @@ function checkBrick() {
       inInterval(ball.getY(), bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
       inInterval(left, bricks[i].x, bricks[i].x + BRICK_WIDTH)
     ) {
-      console.log(bricks[i]);
       dx = -dx;
       shapes.Rectangle.break(
         bricks[i].x,
@@ -245,7 +238,6 @@ function checkBrick() {
       inInterval(ball.getY(), bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
       inInterval(right, bricks[i].x, bricks[i].x + BRICK_WIDTH)
     ) {
-      console.log(bricks[i]);
       dx = -dx;
       shapes.Rectangle.break(
         bricks[i].x,
@@ -302,6 +294,10 @@ function moveThePaddle(e) {
     paddle.move(e.x);
   }
 }
+
+c.addEventListener('touchmove', (e) => {
+  moveThePaddle(getMousePos(c, e));
+});
 
 c.addEventListener('mousemove', (e) => {
   moveThePaddle(getMousePos(c, e));
