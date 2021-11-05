@@ -104,6 +104,22 @@ class Rectangle {
     ctx.fillRect(this.#x, this.#y, this.#width, this.#height);
     ctx.closePath();
   }
+
+  getWidth(){
+    return this.#width;
+  }
+
+  getHeight(){
+    return this.#height;
+  }
+
+  getX() {
+    return this.#x;
+  }
+
+  getY() {
+    return this.#y;
+  }
 }
 
 export default { Circle, Rectangle };
