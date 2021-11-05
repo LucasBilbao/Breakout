@@ -278,8 +278,8 @@ function getMousePos(canvas, evt) {
   h1.innerHTML = `${isTouchDevice()}`;
   if (isTouchDevice()) {
     return {
-      x: evt.touch[0].clientX - rect.left,
-      y: evt.touch[0].clientY - rect.top,
+      x: evt.touches[0].clientX - rect.left,
+      y: evt.touches[0].clientY - rect.top,
     };
   }
   return {
