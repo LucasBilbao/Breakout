@@ -105,11 +105,11 @@ class Rectangle {
     ctx.closePath();
   }
 
-  getWidth(){
+  getWidth() {
     return this.#width;
   }
 
-  getHeight(){
+  getHeight() {
     return this.#height;
   }
 
@@ -119,6 +119,16 @@ class Rectangle {
 
   getY() {
     return this.#y;
+  }
+
+  move(x) {
+    this.clear();
+    this.#x = x - this.#width / 2;
+    this.putInCanvas();
+  }
+
+  clear() {
+    ctx.clearRect(this.#x, this.#y, this.#width, this.#height);
   }
 }
 
