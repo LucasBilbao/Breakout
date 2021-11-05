@@ -172,6 +172,8 @@ function clearOut() {
   ball.clear();
   delete window.ball;
   c.removeEventListener('click', startOrPause);
+  c.removeEventListener('touchstart', startOrPause);
+  c.removeEventListener('touchend', startOrPause);
 }
 
 function checkObj() {
@@ -276,6 +278,8 @@ function getMousePos(canvas, evt) {
 }
 
 c.addEventListener('click', startOrPause);
+c.addEventListener('touchstart', startOrPause);
+c.addEventListener('touchend', startOrPause);
 
 const paddle = new shapes.Rectangle(
   paddleX,
