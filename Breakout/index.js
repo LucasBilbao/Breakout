@@ -30,9 +30,9 @@ const PADDLE_OFFSET = 10;
 
 const BALL_RADIUS = 15;
 
-// My global variables
+// My global letiables
 const NUM_OF_BRICKS = NUM_ROWS * NUM_BRICKS_PER_ROW;
-const lives = 3;
+let lives = 3;
 // const ball;
 // const paddle;
 const colors = [
@@ -45,8 +45,14 @@ const colors = [
   'blue',
   'blue',
 ];
-let dx = -3;
-let dy = 3;
+const angleX = Math.random() * (1 - -1) + -1 <= 0 ? -1 : 1;
+const angleY = Math.random() * (1 - -1) + -1 <= 0 ? -1 : 1;
+
+let dx = angleX * (Math.random() * (4 - 3) + 3);
+let dy = angleY * (Math.random() * (4 - 3) + 3);
+
+console.log(dx, dy);
+
 const paddleX = (c.width - PADDLE_WIDTH) / 2;
 const paddleY = c.height - (PADDLE_OFFSET + PADDLE_HEIGHT);
 // const lost;
@@ -96,8 +102,7 @@ function checkWalls() {
 
   // If hitting the BOTTOM wall
   if (checkBottomWall()) {
-    // lives--;
-    // startOrPause();
+    lives--;
     clearInterval(mover);
     notMoving = !notMoving;
     ball.centerAt(centerX, centerY);
@@ -116,9 +121,135 @@ function startOrPause() {
   }
 }
 
+function checkPaddle() {
+  if (
+    ball.getY() + dy + ball.getRadius() >= paddle.getY() &&
+    ball.getX() >= paddle.getX() &&
+    ball.getX() <= paddle.getX() + paddle.getWidth() &&
+    !(ball.getY() >= paddle.getY())
+  ) {
+    dy = -dy;
+  }
+}
+
 function moveBall() {
   checkWalls();
+  checkObj();
   ball.move(dx, dy);
+  regenerate(bricks);
+
+  if (
+    ball.getY() + ball.getRadius() >= paddle.getY() &&
+    ball.getX() >= paddle.getX() &&
+    ball.getX() <= paddle.getX() + paddle.getWidth()
+  ) {
+    paddle.move(paddle.getX);
+  }
+}
+
+function checkObj() {
+  checkPaddle();
+  checkBrick();
+}
+
+function inInterval(x, a, b) {
+  return x >= a && x <= b;
+}
+
+function checkBrick() {
+  for (let i = 0; i < bricks.length; i += 1) {
+    const top = ball.getY() + dy - 5;
+    if (
+      inInterval(top, bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
+      inInterval(ball.getX(), bricks[i].x, bricks[i].x + BRICK_WIDTH)
+    ) {
+      console.log(bricks[i]);
+      dy = -dy;
+      shapes.Rectangle.break(
+        bricks[i].x,
+        bricks[i].y,
+        bricks[i].brick.getWidth(),
+        bricks[i].brick.getHeight()
+      );
+      bricks = removeAt(bricks, i);
+      return;
+    }
+
+    const bottom = ball.getY() + dy + 5;
+    if (
+      inInterval(bottom, bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
+      inInterval(ball.getX(), bricks[i].x, bricks[i].x + BRICK_WIDTH)
+    ) {
+      console.log(bricks[i]);
+      dy = -dy;
+      shapes.Rectangle.break(
+        bricks[i].x,
+        bricks[i].y,
+        bricks[i].brick.getWidth(),
+        bricks[i].brick.getHeight()
+      );
+      bricks = removeAt(bricks, i);
+      return;
+    }
+
+    const left = ball.getX() + dx + 5;
+    if (
+      inInterval(ball.getY(), bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
+      inInterval(left, bricks[i].x, bricks[i].x + BRICK_WIDTH)
+    ) {
+      console.log(bricks[i]);
+      dx = -dx;
+      shapes.Rectangle.break(
+        bricks[i].x,
+        bricks[i].y,
+        bricks[i].brick.getWidth(),
+        bricks[i].brick.getHeight()
+      );
+      bricks = removeAt(bricks, i);
+      return;
+    }
+
+    const right = ball.getX() + dx - 5;
+    if (
+      inInterval(ball.getY(), bricks[i].y, bricks[i].y + BRICK_HEIGHT) &&
+      inInterval(right, bricks[i].x, bricks[i].x + BRICK_WIDTH)
+    ) {
+      console.log(bricks[i]);
+      dx = -dx;
+      shapes.Rectangle.break(
+        bricks[i].x,
+        bricks[i].y,
+        bricks[i].brick.getWidth(),
+        bricks[i].brick.getHeight()
+      );
+      bricks = removeAt(bricks, i);
+      return;
+    }
+  }
+}
+
+function regenerate(arr) {
+  arr.forEach((item) => {
+    item.brick.putInCanvas();
+  });
+}
+
+function removeAt(arr, index) {
+  let res = [];
+  for (let i = 0; i < arr.length; i += 1) {
+    if (index !== i) {
+      res = [...res, arr[i]];
+    }
+  }
+  return res;
+}
+
+function getMousePos(canvas, evt) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top,
+  };
 }
 
 c.addEventListener('click', startOrPause);
@@ -128,7 +259,49 @@ const paddle = new shapes.Rectangle(
   paddleY,
   PADDLE_WIDTH,
   PADDLE_HEIGHT,
-  'red'
+  '#42b6bd'
 );
+
+function moveThePaddle(e) {
+  if (e.x <= paddle.getWidth() / 2) {
+    paddle.move(0 + paddle.getWidth() / 2);
+  } else if (e.x >= c.width - paddle.getWidth() / 2) {
+    paddle.move(c.width - paddle.getWidth() / 2);
+  } else {
+    paddle.move(e.x);
+  }
+}
+
+c.addEventListener('mousemove', (e) => {
+  moveThePaddle(getMousePos(c, e));
+});
+
+function drawBricks() {
+  let res = [];
+  let xPos, yPos, brick;
+  for (let i = 0; i < NUM_ROWS; ++i) {
+    yPos = BRICK_TOP_OFFSET + i * (BRICK_HEIGHT + BRICK_SPACING);
+    for (let j = 0; j < NUM_BRICKS_PER_ROW; ++j) {
+      xPos = BRICK_SPACING + j * (BRICK_WIDTH + BRICK_SPACING);
+      brick = {
+        x: xPos,
+        y: yPos,
+        brick: new shapes.Rectangle(
+          xPos,
+          yPos,
+          BRICK_WIDTH,
+          BRICK_HEIGHT,
+          colors[i]
+        ),
+      };
+      res = [...res, brick];
+    }
+  }
+  return res;
+}
+
+let bricks = drawBricks();
+
+// console.log(bricks);
 
 export { ctx };
